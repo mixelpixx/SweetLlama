@@ -30,22 +30,23 @@ npm install @types/react @types/react-dom typescript
 
 
 
-src/ 📁
-├── components/ 📁
-│   ├── Chat.tsx 📄
-│   ├── MessageInput.tsx 📄
-│   ├── MessageList.tsx 📄
-│   └── SettingsPanel.tsx 📄
-├── hooks/ 📁
-│   ├── useChat.ts 📄
-│   ├── useLLM.ts 📄
-│   └── useSettings.ts 📄
-├── services/ 📁
-│   └── llm.ts 📄
-├── types/ 📁
-│   └── index.ts 📄
-└── utils/ 📁
-    └── chatTemplate.ts 📄
+src/
+├── components/ 
+│   ├── Chat.tsx 
+│   ├── MessageInput.tsx 
+│   ├── MessageList.tsx 
+│   └── SettingsPanel.tsx 
+├── hooks/ 
+│   ├── useChat.ts 
+│   ├── useLLM.ts 
+│   └── useSettings.ts 
+├── services/ 
+│   └── llm.ts 
+├── types/ 
+│   └── index.ts 
+└── utils/ 
+    └── chatTemplate.ts 
+    
 ## Configuration
 
 ### Model Settings
