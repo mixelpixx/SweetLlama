@@ -1,48 +1,34 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Message, MessageRole, ChatTemplateName } from '../types';
 import { useLLM } from '../hooks/useLLM';
-import { ChatTemplate } from '../utils/chatTemplate';
+import { useChat } from '../hooks/useChat';
+import { useSettings } from '../hooks/useSettings';
+import { MessageInput } from './MessageInput';
+import { MessageList } from './MessageList';
+import { SettingsPanel } from './SettingsPanel';
 
 interface ChatProps {
   modelPath: string;
-  systemPrompt?: string;
-  templateName?: ChatTemplateName;
+  initialSystemPrompt?: string;
 }
 
-export const Chat: React.FC<ChatProps> = ({ 
-  modelPath, 
-  systemPrompt = "You are an assistant.",
-  templateName = ChatTemplateName.ChatML
+export const Chat: React.FC<ChatProps> = ({
+  modelPath,
+  initialSystemPrompt = "You are an assistant."
 }) => {
-  const [messages, setMessages] = useState<Message[]>([
-    { id: '0', role: MessageRole.System, content: systemPrompt }
-  ]);
-  const [input, setInput] = useState('');
+  const [templateName, setTemplateName] = useState(ChatTemplateName.ChatML);
+  const [systemPrompt, setSystemPrompt] = useState(initialSystemPrompt);
   const { predict, isLoading, error } = useLLM(modelPath);
-  
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim()) return;
+  const { messages, addMessage, getPrompt } = useChat({ systemPrompt, templateName });
+  const { params, updateParams, updateSamplerParams } = useSettings();
 
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      role: MessageRole.User,
-      content: input
-    };
-
-    setMessages(prev => [...prev, userMessage]);
-    setInput('');
+  const handleSubmit = async (content: string) => {
+    addMessage(MessageRole.User, content);
 
     try {
-      const template = ChatTemplate.templates[templateName];
-      const prompt = template.apply(messages);
+      const prompt = getPrompt();
       const response = await predict(prompt);
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: MessageRole.Assistant,
-        content: response
-      };
-      setMessages(prev => [...prev, assistantMessage]);
+      addMessage(MessageRole.Assistant, response);
     } catch (err) {
       console.error('Prediction failed:', err);
     }
@@ -50,25 +36,20 @@ export const Chat: React.FC<ChatProps> = ({
 
   return (
     <div className="chat-container">
-      <div className="messages">
-        {messages.map(msg => (
-          <div key={msg.id} className={`message ${msg.role}`}>
-            {msg.content}
-          </div>
-        ))}
+      <div className="chat-main">
+        <MessageList messages={messages} loading={isLoading} />
+        <MessageInput onSubmit={handleSubmit} disabled={isLoading} />
+        {error && <div className="error">{error}</div>}
       </div>
-      <form onSubmit={handleSubmit}>
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type your message..."
-          disabled={isLoading}
-        />
-        <button type="submit" disabled={isLoading}>
-          Send
-        </button>
-      </form>
-      {error && <div className="error">{error}</div>}
+      <SettingsPanel
+        params={params}
+        onUpdateParams={updateParams}
+        onUpdateSamplerParams={updateSamplerParams}
+        templateName={templateName}
+        onTemplateChange={setTemplateName}
+        systemPrompt={systemPrompt}
+        onSystemPromptChange={setSystemPrompt}
+      />
     </div>
   );
 };
