@@ -28,17 +28,24 @@ npm install @types/react @types/react-dom typescript
    - Copy `public/llama.worker.js` to your project's `public/` directory
    - Ensure your project has the required WASM bindings for llama.cpp
 
-5. Basic usage example:
 
-import { Chat } from './components/Chat';
 
-function App() { return (
-
-); }
-## Project Structure
-
-src/ ├── components/ # React UI components │ ├── Chat.tsx # Main chat interface │ ├── MessageInput.tsx │ ├── MessageList.tsx │ └── SettingsPanel.tsx ├── hooks/ # React custom hooks │ ├── useChat.ts # Chat state management │ ├── useLLM.ts # LLM interaction │ └── useSettings.ts # Settings management ├── services/ │ └── llm.ts # LLM service worker interface ├── types/ │ └── index.ts # TypeScript definitions └── utils/ └── chatTemplate.ts # Chat formatting templates
-
+src/ 📁
+├── components/ 📁
+│   ├── Chat.tsx 📄
+│   ├── MessageInput.tsx 📄
+│   ├── MessageList.tsx 📄
+│   └── SettingsPanel.tsx 📄
+├── hooks/ 📁
+│   ├── useChat.ts 📄
+│   ├── useLLM.ts 📄
+│   └── useSettings.ts 📄
+├── services/ 📁
+│   └── llm.ts 📄
+├── types/ 📁
+│   └── index.ts 📄
+└── utils/ 📁
+    └── chatTemplate.ts 📄
 ## Configuration
 
 ### Model Settings
